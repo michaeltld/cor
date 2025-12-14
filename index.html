@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Changelog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+    font-family: system-ui, sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+    padding: 20px;
+}
+
+.changelog {
+    max-width: 800px;
+    margin: auto;
+}
+
+.entry {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.version {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.date {
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+ul {
+    margin-top: 10px;
+}
+</style>
+</head>
+<body>
+
+<h1>📜 Live Changelog</h1>
+
+<div class="changelog" id="changelog">
+    Loading changelog…
+</div>
+
+<script>
+const CHANGELOG_URL = "https://aiserver.html-5.me/changelog.php";
+
+fetch(CHANGELOG_URL)
+    .then(res => {
+        if (!res.ok) throw new Error("Network error");
+        return res.json();
+    })
+    .then(data => {
+        const container = document.getElementById("changelog");
+        container.innerHTML = "";
+
+        data.forEach(entry => {
+            const div = document.createElement("div");
+            div.className = "entry";
+
+            div.innerHTML = `
+                <div class="version">v${entry.version}</div>
+                <div class="date">${entry.date}</div>
+                <ul>
+                    ${entry.changes.map(c => `<li>${c}</li>`).join("")}
+                </ul>
+            `;
+
+            container.appendChild(div);
+        });
+    })
+    .catch(err => {
+        document.getElementById("changelog").innerText =
+            "Failed to load changelog.";
+        console.error(err);
+    });
+</script>
+
+</body>
+</html>
